@@ -8,6 +8,7 @@ header:
 
 includes:
 	include "grass.asm"
+	include "hero.asm"
 	include "src/vdp.z80"
 	include "src/graphics.z80"
 
@@ -29,9 +30,22 @@ loop:
 	call graphics_SetNameTableEntry
 	inc hl
 	djnz loop
-	
 	dec c
 	jr nz,loop1
+
+	ld hl,0
+	ld de,hero
+	call graphics_LoadSprite
+	ld hl,0
+	ld de,attribute
+	call graphics_SetSpriteAttributeTableEntry
+
+attribute:
+	db 10
+	db 10
+	db 0
+	db 0b00001111
+
 
 	di
 	halt
