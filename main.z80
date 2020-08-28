@@ -1,0 +1,39 @@
+	org 0x8000
+
+header:
+	db 0xFE
+	dw includes
+	dw endaddr
+	dw main
+
+includes:
+	include "grass.asm"
+	include "src/vdp.z80"
+	include "src/graphics.z80"
+
+main:
+	call vdp_init
+	ld hl,0
+	ld de,grass
+	call graphics_LoadTileAll
+	ld c,3
+	ld hl,0
+loop1:
+	ld b,255
+	ld de,loop
+	call graphics_SetNameTableEntry
+	inc hl
+loop:
+	db 0
+	ld de,loop
+	call graphics_SetNameTableEntry
+	inc hl
+	djnz loop
+	
+	dec c
+	jr nz,loop1
+
+	di
+	halt
+
+endaddr:

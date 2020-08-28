@@ -1,0 +1,2 @@
+echo "Starting openMSX..."
+openmsx-debugger & openmsx -script emu.cfg

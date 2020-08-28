@@ -1,0 +1,73 @@
+NAME_TABLE_BASE_ADDRESS equ 0x1800
+PATTERN_TABLE_BASE_ADDRESS equ 0x0000
+COLOR_TABLE_BASE_ADDRESS equ 0x2000
+
+;input: hl = index
+;	de = data address
+graphics_LoadTileAll:
+	push bc
+		ld bc,256
+		call graphics_LoadTile
+		add hl,bc
+		call graphics_LoadTile
+		add hl,bc
+		call graphics_LoadTile
+	pop bc
+
+;input: hl = index
+;	de = data address
+graphics_LoadTile:
+	push de
+		push hl
+			push de
+				call graphics_SetPatternTableEntry
+			pop de
+			ld hl,8	    ;incrementing address by 8 bytes to get to color data
+			add hl,de
+			ex de,hl
+		pop hl
+		push hl
+			push de
+				call graphics_SetColorTableEntry
+			pop de
+		pop hl
+	pop de
+	ret
+
+;input: hl = index
+;	de = name address
+graphics_SetNameTableEntry:
+	push bc
+		ld bc,NAME_TABLE_BASE_ADDRESS
+		add hl,bc   ;target address = base address + index
+		ld b,1	    ;1 byte to copy to VRAM
+		jr graphics_SetTableEntry
+
+;input: hl = index
+;	de = pattern array address
+graphics_SetPatternTableEntry:
+	push bc
+		ld bc,PATTERN_TABLE_BASE_ADDRESS
+		jr graphics_CalculateTableAddress
+
+;input: hl = index
+;	de = color array address
+graphics_SetColorTableEntry
+	push bc
+		ld bc,COLOR_TABLE_BASE_ADDRESS
+
+graphics_CalculateTableAddress:
+		sla l	    ;multiply de by 8
+		rl h
+		sla l
+		rl h
+		sla l
+		rl h
+		add hl,bc   ;target address = base address + 8 * index
+		ld b,8	    ;8 bytes to copy to VRAM
+
+graphics_SetTableEntry:
+		ex de,hl
+		call vdp_VRAMWrite
+	pop bc
+	ret

@@ -1,0 +1,23 @@
+if [ $# -eq 0 ]
+then
+	for file in *.z80
+	do
+		vasm -chklabels -nocase -Fbin -o dsk/${file%.z80}.bin $file
+	done
+
+elif [ $# -eq 1 ]
+then
+	vasm -chklabels -nocase -Fbin -o dsk/${1%.z80}.bin $1
+
+elif [ $# -eq 2 ]
+then
+	mkdir $2
+	vasm -chklabels -nocase -Fbin -o $2/${1%.z80}.$2 $1
+
+else
+	echo "Usage: ./build [filename] [extension]
+	If no name is specified, will build all files"
+	exit 1
+fi
+
+./emu
