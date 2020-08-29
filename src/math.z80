@@ -1,0 +1,521 @@
+;8x8 bit multiplication
+;input: h = multiplier
+;	e = multiplicand
+;output: hl = product
+;alters: l,d
+math_Mult8:
+	ld l,0
+	add hl,hl
+	jr nc,Mult8_NoAdd0
+	add hl,de
+Mult8_NoAdd0:
+	add hl,hl
+	jr nc,Mult8_NoAdd1
+	add hl,de
+Mult8_NoAdd1:
+	add hl,hl
+	jr nc,Mult8_NoAdd2
+	add hl,de
+Mult8_NoAdd2:
+	add hl,hl
+	jr nc,Mult8_NoAdd3
+	add hl,de
+Mult8_NoAdd3:
+	add hl,hl
+	jr nc,Mult8_NoAdd4
+	add hl,de
+Mult8_NoAdd4:
+	add hl,hl
+	jr nc,Mult8_NoAdd5
+	add hl,de
+Mult8_NoAdd5:
+	add hl,hl
+	jr nc,Mult8_NoAdd6
+	add hl,de
+Mult8_NoAdd6:
+	add hl,hl
+	ret nc
+	add hl,de
+	ret
+
+;8x16 bit multiplication
+;input: a = multiplicand
+;	de = multiplier
+;output: hl = product
+math_Mult12:
+	ld hl,0
+	add a,a
+	jr nc,Mult12_NoAdd0
+	add hl,de
+Mult12_NoAdd0:
+	add hl,hl
+	add a,a
+	jr nc,Mult12_NoAdd1
+	add hl,de
+Mult12_NoAdd1:
+	add hl,hl
+	add a,a
+	jr nc,Mult12_NoAdd2
+	add hl,de
+Mult12_NoAdd2:
+	add hl,hl
+	add a,a
+	jr nc,Mult12_NoAdd3
+	add hl,de
+Mult12_NoAdd3:
+	add hl,hl
+	add a,a
+	jr nc,Mult12_NoAdd4
+	add hl,de
+Mult12_NoAdd4:
+	add hl,hl
+	add a,a
+	jr nc,Mult12_NoAdd5
+	add hl,de
+Mult12_NoAdd5:
+	add hl,hl
+	add a,a
+	jr nc,Mult12_NoAdd6
+	add hl,de
+Mult12_NoAdd6:
+	add hl,hl
+	add a,a
+	ret nc
+	add hl,de
+	ret
+
+;16x16 multiplication
+;input: bc = multiplier
+;	de = multiplicand
+;output: hl = product
+;alters: a
+math_Mult16:
+	ld hl,0
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd0
+	add hl,de
+Mult16_NoAdd0:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd1
+	add hl,de
+Mult16_NoAdd1:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd2
+	add hl,de
+Mult16_NoAdd2:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd3
+	add hl,de
+Mult16_NoAdd3:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd4
+	add hl,de
+Mult16_NoAdd4:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd5
+	add hl,de
+Mult16_NoAdd5:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd6
+	add hl,de
+Mult16_NoAdd6:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd7:
+	add hl,de
+Mult16_NoAdd7:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd8:
+	add hl,de
+Mult16_NoAdd8:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd9:
+	add hl,de
+Mult16_NoAdd9:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd10:
+	add hl,de
+Mult16_NoAdd10:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd11:
+	add hl,de
+Mult16_NoAdd11:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd12:
+	add hl,de
+Mult16_NoAdd12:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd13:
+	add hl,de
+Mult16_NoAdd13:
+	add hl,hl
+	sla c
+	rl b
+	jr nc,Mult16_NoAdd14:
+	add hl,de
+Mult16_NoAdd14:
+	add hl,hl
+	sla c
+	rl b
+	ret nc
+	add hl,de
+	ret
+
+;16x16 multiplication (32 bit output)
+;input: bc = multiplicator 
+;	de = multiplicand
+;output: bchl = product
+;alters: a
+math_Mult32:
+	ld a,c
+	ld c,b
+	ld hl,0
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd0
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd0
+	inc c
+Mult32_NoAdd0:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd1
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd1
+	inc c
+Mult32_NoAdd1:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd2
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd2
+	inc c
+Mult32_NoAdd2:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd3
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd3
+	inc c
+Mult32_NoAdd3:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd4
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd4
+	inc c
+Mult32_NoAdd4:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd5
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd5
+	inc c
+Mult32_NoAdd5:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd6
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd6
+	inc c
+Mult32_NoAdd6:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd7
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd7
+	inc c
+Mult32_NoAdd7:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd8
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd8
+	inc c
+Mult32_NoAdd8:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd9
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd9
+	inc c
+Mult32_NoAdd9:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd10
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd10
+	inc c
+Mult32_NoAdd10:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd11
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd11
+	inc c
+Mult32_NoAdd11:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd12
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd12
+	inc c
+Mult32_NoAdd12:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd13
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd13
+	inc c
+Mult32_NoAdd13:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_NoAdd14
+	add hl,de
+	adc a,0
+	jp nc,Mult32_NoAdd14
+	inc c
+Mult32_NoAdd14:
+	add hl,hl
+	rla
+	rl c
+	jr nc,Mult32_End
+	add hl,de
+	adc a,0
+	jp nc,Mult32_End
+	inc c
+Mult32_End:
+	ld b,c
+	ld c,a
+	ret
+
+;8 bit division
+;input: e = dividend
+;	c = divisor
+;output: a = quotient
+;	 b = remainder
+math_Div8:
+	xor a
+	rl e
+	rla
+	sub c
+	jr nc,Div8_NoAdd0
+	add a,c
+Div8_NoAdd0:
+	rl e
+	rla
+	sub c
+	jr nc,Div8_NoAdd1
+	add a,c
+Div8_NoAdd1:
+	rl e
+	rla
+	sub c
+	jr nc,Div8_NoAdd2
+	add a,c
+Div8_NoAdd2:
+	rl e
+	rla
+	sub c
+	jr nc,Div8_NoAdd3
+	add a,c
+Div8_NoAdd3:
+	rl e
+	rla
+	sub c
+	jr nc,Div8_NoAdd4
+	add a,c
+Div8_NoAdd4:
+	rl e
+	rla
+	sub c
+	jr nc,Div8_NoAdd5
+	add a,c
+Div8_NoAdd5:
+	rl e
+	rla
+	sub c
+	jr nc,Div8_NoAdd6
+	add a,c
+Div8_NoAdd6:
+	rl e
+	rla
+	sub c
+	jr nc,Div8_End
+	add a,c
+Div8_End:
+	ld b,a
+	ld a,e
+	rla
+	cpl
+	ret
+
+;Divide 16-bit values (with 16-bit result)
+;input: bc = dividend
+;	de = divisor
+;output: bc = quotient
+;	 hl = remainder
+math_Div16:
+	ld hl,0
+	ld a,b
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd0
+	add hl,de
+Div16_NoAdd0:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd1
+	add hl,de
+Div16_NoAdd1:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd2
+	add hl,de
+Div16_NoAdd2:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd3
+	add hl,de
+Div16_NoAdd3:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd4
+	add hl,de
+Div16_NoAdd4:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd5
+	add hl,de
+Div16_NoAdd5:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd6
+	add hl,de
+Div16_NoAdd6:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_End1
+	add hl,de
+Div16_End1:
+	rla
+	cpl
+	ld b,a
+	ld a,c
+	ld c,b
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd7
+	add hl,de
+Div16_NoAdd7:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd8
+	add hl,de
+Div16_NoAdd8:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd9
+	add hl,de
+Div16_NoAdd9:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd10
+	add hl,de
+Div16_NoAdd10:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd11
+	add hl,de
+Div16_NoAdd11:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd12
+	add hl,de
+Div16_NoAdd12:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_NoAdd13
+	add hl,de
+Div16_NoAdd13:
+	rla
+	adc hl,hl
+	sbc hl,de
+	jr nc,Div16_End2
+	add hl,de
+Div16_End2:
+	rla
+	cpl
+	ld b,c
+	ld c,a
+	ret

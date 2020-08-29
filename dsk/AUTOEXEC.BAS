@@ -1,1 +1,0 @@
-10 BLOAD "MAIN.BIN",R

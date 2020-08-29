@@ -1,0 +1,142 @@
+	org 0x8000
+
+header:
+	db 0xFE
+	dw includes
+	dw endaddr
+	dw main
+
+includes:
+	include "src/math_rolled.z80"
+
+main:
+	ld h,10
+	ld e,23
+	call math_Mult8
+	ld (0x9000),hl
+	ld h,5
+	ld e,2
+	call math_Mult8
+	ld (0x9002),hl
+	ld h,17
+	ld e,9
+	call math_Mult8
+	ld (0x9004),hl
+	ld h,240
+	ld e,185
+	call math_Mult8
+	ld (0x9006),hl
+
+	ld a,47
+	ld de,233
+	call math_Mult12
+	ld (0x9008),hl
+	ld a,56
+	ld de,730
+	call math_Mult12
+	ld (0x900A),hl
+	ld a,12
+	ld de,3000
+	call math_Mult12
+	ld (0x900C),hl
+	ld a,4
+	ld de,14321
+	call math_Mult12
+	ld (0x900E),hl
+	ld a,178
+	ld de,32
+	call math_Mult12
+	ld (0x9010),hl
+
+	ld bc,34
+	ld de,397
+	call math_Mult16
+	ld (0x9012),hl
+	ld bc,12
+	ld de,83
+	call math_Mult16
+	ld (0x9014),hl
+	ld bc,52
+	ld de,55
+	call math_Mult16
+	ld (0x9016),hl
+	ld bc,3
+	ld de,20000
+	call math_Mult16
+	ld (0x9018),hl
+	ld bc,23217
+	ld de,1
+	call math_Mult16
+	ld (0x901A),hl
+
+	ld bc,432
+	ld de,397
+	call math_Mult32
+	ld (0x901C),bc
+	ld (0x901E),hl
+	ld bc,3892
+	ld de,397
+	call math_Mult32
+	ld (0x9020),bc
+	ld (0x9022),hl
+	ld bc,34123
+	ld de,397
+	call math_Mult32
+	ld (0x9024),bc
+	ld (0x9026),hl
+	ld bc,34098
+	ld de,81
+	call math_Mult32
+	ld (0x9028),bc
+	ld (0x902A),hl
+
+
+	ld e,200
+	ld c,10
+	call math_Div8
+	ld (0x902C),a
+	ld a,b
+	ld (0x902D),a
+	ld e,32
+	ld c,4
+	call math_Div8
+	ld (0x902E),a
+	ld a,b
+	ld (0x902F),a
+	ld e,7
+	ld c,2
+	call math_Div8
+	ld (0x9030),a
+	ld a,b
+	ld (0x9031),a
+	ld e,98
+	ld c,65
+	call math_Div8
+	ld (0x9032),a
+	ld a,b
+	ld (0x9033),a
+
+	ld bc,38
+	ld de,4
+	call math_Div16
+	ld (0x9034),bc
+	ld (0x9036),hl
+	ld bc,120
+	ld de,3
+	call math_Div16
+	ld (0x9038),bc
+	ld (0x903A),hl
+	ld bc,37054
+	ld de,30000
+	call math_Div16
+	ld (0x903C),bc
+	ld (0x903E),hl
+	ld bc,42900
+	ld de,2
+	call math_Div16
+	ld (0x9040),bc
+	ld (0x9042),hl
+
+	ret
+
+endaddr:
