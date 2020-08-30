@@ -2,7 +2,6 @@
 ;input: h = multiplier
 ;	e = multiplicand
 ;output: hl = product
-;alters: l,d
 math_Mult8:
 	ld l,0
 	add hl,hl

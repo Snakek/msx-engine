@@ -36,7 +36,9 @@ loop:
 
 	ld hl,0
 	ld de,hero
-	call graphics_LoadSprite
+	call graphics_SetSpritePatternTableEntry
+
+	push bc
 	ld hl,0
 	ld de,attribute
 	call graphics_SetSpriteAttributeTableEntry
