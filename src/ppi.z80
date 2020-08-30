@@ -1,0 +1,86 @@
+PPI_SLOT_SELECT equ 0xA8		    ;ppi port a
+PPI_KEYBOARD_MATRIX equ 0xA9		    ;ppi port b
+PPI_KEYBOARD_CASSETTE_INTERFACE equ 0xAA    ;ppi port c
+PPI_CONTROL_REGISTER equ 0xAB		    ;ppi mode port
+
+;turns the key clicking on
+ppi_KeyClickOn:
+	push af
+		ld a,0b00001111
+		out (PPI_CONTROL_REGISTER),a
+	pop af
+	ret
+
+;turns the key clicking off
+ppi_KeyClickOff:
+	push af
+		ld a,0b00001110
+		out (PPI_CONTROL_REGISTER),a
+	pop af
+	ret
+
+;turns the caps lock LED on
+ppi_CapsLedOn:
+	push af
+		ld a,0b00001100
+		out (PPI_CONTROL_REGISTER),a
+	pop af
+	ret
+
+;turns the caps lock LED off
+ppi_CapsLedOff:
+	push af
+		ld a,0b00001101
+		out (PPI_CONTROL_REGISTER),a
+	pop af
+	ret
+
+;turns cassette write on
+ppi_CasWriteOn:
+	push af
+		ld a,0b00001011
+		out (PPI_CONTROL_REGISTER),a
+	pop af
+	ret
+
+;turns cassette write off
+ppi_CasWriteOff:
+	push af
+		ld a,0b00001010
+		out (PPI_CONTROL_REGISTER),a
+	pop af
+	ret
+
+;turns cassette motor on 
+ppi_CasMotorOn:
+	push af
+		ld a,0b00001000
+		out (PPI_CONTROL_REGISTER),a
+	pop af
+	ret
+
+;turns cassette motor off
+ppi_CasMotorOff:
+	push af
+		ld a,0b00001001
+		out (PPI_CONTROL_REGISTER),a
+	pop af
+	ret
+
+;selects keyboard matrix row
+;input: b = row number
+;alters: a
+ppi_SelectKeyboardMatrixRow:
+	in a,(PPI_KEYBOARD_CASSETTE_INTERFACE)
+	and 0b11110000
+	or b
+	out (PPI_KEYBOARD_CASSETTE_INTERFACE),a
+	ret
+
+;reads keyboard matrix at a specific row
+;input: b = row number
+;output: a = row value
+ppi_ReadKeyMatrix:
+	call ppi_SelectKeyboardMatrixRow
+	in a,(PPI_KEYBOARD_MATRIX)
+	ret

@@ -74,7 +74,7 @@ graphics_SetPatternTableEntry:
 
 ;input: hl = index
 ;	de = color array address
-graphics_SetColorTableEntry
+graphics_SetColorTableEntry:
 	push bc
 		ld bc,COLOR_TABLE_BASE_ADDRESS
 		call graphics_CalculateTableAddress8

@@ -9,9 +9,10 @@ header:
 includes:
 	include "grass.asm"
 	include "hero.asm"
+	include "src/math.z80"
+	include "src/ppi.z80"
 	include "src/vdp.z80"
 	include "src/graphics.z80"
-	include "src/math.z80"
 
 main:
 	call vdp_init
@@ -43,12 +44,24 @@ loop:
 	ld de,attribute
 	call graphics_SetSpriteAttributeTableEntry
 
+endloop:
+	ld b,3
+	call ppi_ReadKeyMatrix
+	cp 0xFF
+	jr nz,playsound
+	jr endloop
+	
+
+playsound:
+	call ppi_KeyClickOn
+	call ppi_KeyClickOff
+	jr endloop
+
 attribute:
 	db 10
 	db 10
 	db 0
 	db 0b00001111
-
 
 	di
 	halt
