@@ -19,17 +19,15 @@ main:
 	ld hl,0
 	ld de,grass
 	call graphics_LoadTileAll
-	ld c,3
+	ld a,0
 	ld hl,0
+	ld c,3
 loop1:
-	ld b,255
-	ld de,loop
-	call graphics_SetNameTableEntry
+	call graphics_SetTileNameTableEntry
 	inc hl
+	ld b,255
 loop:
-	db 0
-	ld de,loop
-	call graphics_SetNameTableEntry
+	call graphics_SetTileNameTableEntry
 	inc hl
 	djnz loop
 	dec c
@@ -37,12 +35,24 @@ loop:
 
 	ld hl,0
 	ld de,hero
-	call graphics_SetSpritePatternTableEntry
+	call graphics_LoadSprite
 
-	push bc
-	ld hl,0
-	ld de,attribute
-	call graphics_SetSpriteAttributeTableEntry
+	ld hl,2
+	ld a,2
+	call graphics_SetSpriteName
+
+	ld hl,2
+	ld a,100
+	ld b,28
+	call graphics_SetSpritePos
+
+	ld hl,2
+	ld c,4
+	call graphics_SetSpriteColor
+
+	ld hl,2
+	ld b,1
+	call graphics_SetSpriteEarlyClockBit
 
 endloop:
 	ld b,3

@@ -37,10 +37,12 @@ vdp_init:
 
 	ret
 
+;writes a byte into a VDP register
 ;input: a = data
 ;	b = register number
+;alters: a,b
 vdp_RegWrite:
-	set 7,b
+	set 7,b	    ;set write bit
 	di
 		out (VDP_REG),a
 		ld a,b
@@ -48,12 +50,14 @@ vdp_RegWrite:
 	ei
 	ret
 
-;input: hl = RAM address
+;writes a byte array from memory into VRAM
+;input: hl = data address
 ;	de = VRAM address
 ;	b = bytes to write
-vdp_VRAMWrite:
+;alters: hl,de
+vdp_VRAMWriteFromMemory:
 	push bc
-		set 6,d
+		set 6,d	    ;set write bit
 		ld c,VDP_REG
 		di
 			out (c),e
@@ -64,6 +68,25 @@ vdp_VRAMWrite:
 	pop bc
 	ret
 
+;writes a byte from a cpu register into VRAM
+;input: a = data
+;	de = VRAM address
+vdp_VRAMWriteFromReg:
+	push bc
+		push de
+			set 6,d	    ;set write bit
+			ld c,VDP_REG
+			di
+				out (c),e
+				out (c),d
+				dec c
+				out (c),a
+			ei
+		pop de
+	pop bc
+	ret
+
+;reads the current value of a VDP register
 ;output: a = VDP status register
 vdp_RegRead:
 	di
@@ -71,10 +94,12 @@ vdp_RegRead:
 	ei
 	ret
 
-;input: hl = RAM address
+;reads a byte array from VRAM into memory
+;input: hl = data address
 ;	de = VRAM address
 ;	b = number of bytes
-vdp_VRAMRead:
+;alters: hl
+vdp_VRAMReadToMemory:
 	push bc
 		ld c,VDP_REG
 		di
@@ -82,6 +107,21 @@ vdp_VRAMRead:
 			out (c),d
 			dec c
 			inir
+		ei
+	pop bc
+	ret
+
+;reads a byte from VRAM into a cpu register
+;input: de = VRAM address
+;output: a = byte read
+vdp_VRAMReadToReg:
+	push bc
+		ld c,VDP_REG
+		di
+			out (c),e
+			out (c),d
+			dec c
+			in a,(c)
 		ei
 	pop bc
 	ret

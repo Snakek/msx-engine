@@ -4,6 +4,7 @@ COLOR_TABLE_BASE_ADDRESS equ 0x2000
 SPRITE_PATTERN_TABLE_BASE_ADDRESS equ 0x3800
 SPRITE_ATTRIBUTE_TABLE_BASE_ADDRESS equ 0x1B00
 
+;loads a tile's data into all three tables, at a same relative index
 ;input: hl = index
 ;	de = data address
 graphics_LoadTileAll:
@@ -16,13 +17,14 @@ graphics_LoadTileAll:
 		call graphics_LoadTile
 	pop bc
 
+;loads both pattern and color of a tile into VRAM
 ;input: hl = index
 ;	de = data address
 graphics_LoadTile:
 	push de
 		push hl
 			push de
-				call graphics_SetPatternTableEntry
+				call graphics_SetTilePatternTableEntry
 			pop de
 			ld hl,8	    ;incrementing address by 8 bytes to get to color data
 			add hl,de
@@ -30,7 +32,7 @@ graphics_LoadTile:
 		pop hl
 		push hl
 			push de
-				call graphics_SetColorTableEntry
+				call graphics_SetTileColorTableEntry
 			pop de
 		pop hl
 	pop de
@@ -38,70 +40,138 @@ graphics_LoadTile:
 
 ;input: hl = index
 ;	de = sprite pattern address
-graphics_SetSpritePatternTableEntry:
+graphics_LoadSprite:
 	push bc
 		ld bc,SPRITE_PATTERN_TABLE_BASE_ADDRESS
-		call graphics_CalculateTableAddress64
-		ld b,64	    ;64 bytes to copy to VRAM
-		jr graphics_SetTableEntry
+		call graphics_CalculateTableAddress32
+		ld b,32	    ;64 bytes to copy to VRAM
+		call vdp_VRAMWriteFromMemory
+	pop bc
+	ret
 
 ;input: hl = index
-;	de = name address
-graphics_SetNameTableEntry:
-	push bc
-		ld bc,NAME_TABLE_BASE_ADDRESS
-		call graphics_CalculateTableAddress1
-		ld b,1	    ;1 byte to copy to VRAM
-		jr graphics_SetTableEntry
-
-;input: hl = index
-;	de = attribute address
-graphics_SetSpriteAttributeTableEntry:
+;	a = y
+;	b = x
+;alters: a
+;changes a sprite's y and x coordinates
+graphics_SetSpritePos:
 	push bc
 		ld bc,SPRITE_ATTRIBUTE_TABLE_BASE_ADDRESS
 		call graphics_CalculateTableAddress4
-		ld b,4	    ;4 bytes to copy to VRAM
-		jr graphics_SetTableEntry
+	pop bc
+	push de
+		call vdp_VRAMWriteFromReg
+	pop de
+	ld a,b
+	inc de
+	call vdp_VRAMWriteFromReg
+		
+	ret
+
+;changes a sprite's generating pattern
+;input: hl = index
+;	a = name
+graphics_SetSpriteName:
+	push bc
+		ld bc,SPRITE_ATTRIBUTE_TABLE_BASE_ADDRESS
+		call graphics_CalculateTableAddress4
+	pop bc
+	inc de
+	inc de
+	call vdp_VRAMWriteFromReg
+	ret
+
+;changes a sprite's color
+;input: hl = index
+;	c = color
+graphics_SetSpriteColor:
+	push bc
+		ld bc,SPRITE_ATTRIBUTE_TABLE_BASE_ADDRESS
+		call graphics_CalculateTableAddress4
+	pop bc
+	inc de
+	inc de
+	inc de
+	call vdp_VRAMReadToReg
+	and 0b11110000
+	or c
+	call vdp_VRAMWriteFromReg
+	ret
 
 ;input: hl = index
+;	b = early clock bit
+;sets a sprite's early clock bit, which shifts the sprite 32 pixels to the left
+graphics_SetSpriteEarlyClockBit:
+	push bc
+		ld bc,SPRITE_ATTRIBUTE_TABLE_BASE_ADDRESS
+		call graphics_CalculateTableAddress4
+	pop bc
+	inc de
+	inc de
+	inc de
+	call vdp_VRAMReadToReg
+	and 0b00001111
+	rrc b
+	or b
+
+	call vdp_VRAMWriteFromReg
+	ret
+	
+;writes an entry into the tile name table
+;input: hl = index
+;	a = name
+;alters: de
+graphics_SetTileNameTableEntry:
+	push bc
+		push hl
+			ld bc,NAME_TABLE_BASE_ADDRESS
+			call graphics_CalculateTableAddress1
+			call vdp_VRAMWriteFromReg
+		pop hl
+	pop bc
+	ret
+
+;loads a tile's pattern data into VRAM
+;input: hl = index
 ;	de = pattern array address
-graphics_SetPatternTableEntry:
+;alters: hl,de
+graphics_SetTilePatternTableEntry:
 	push bc
 		ld bc,PATTERN_TABLE_BASE_ADDRESS
 		call graphics_CalculateTableAddress8
 		ld b,8	    ;8 bytes to copy to VRAM
-		jr graphics_SetTableEntry
+		call vdp_VRAMWriteFromMemory
+	pop bc
+	ret
 
+;loads a tile's color data into VRAM
 ;input: hl = index
 ;	de = color array address
-graphics_SetColorTableEntry:
+;alters: hl,de
+graphics_SetTileColorTableEntry:
 	push bc
 		ld bc,COLOR_TABLE_BASE_ADDRESS
 		call graphics_CalculateTableAddress8
 		ld b,8	    ;8 bytes to copy to VRAM
-		jr graphics_SetTableEntry
-
-graphics_CalculateTableAddress64:
-		sla l	    ;multiply index by 64
-		rl h
-		sla l
-		rl h
-		sla l
-		rl h
-graphics_CalculateTableAddress8:
-		sla l	    ;multiply index by 8
-		rl h
-graphics_CalculateTableAddress4:
-		sla l	    ;multiply index by 4
-		rl h
-		sla l
-		rl h
-graphics_CalculateTableAddress1:
-		add hl,bc	;target address = base address + index * entry size
-		ret
-
-graphics_SetTableEntry:
-		ex de,hl
-		call vdp_VRAMWrite
+		call vdp_VRAMWriteFromMemory
 	pop bc
+	ret
+
+;multiplies index by block size, adds to base address and exchanges hl with de
+graphics_CalculateTableAddress32:
+	sla l	    ;multiply index by 32
+	rl h
+	sla l
+	rl h
+graphics_CalculateTableAddress8:
+	sla l	    ;multiply index by 8
+	rl h
+graphics_CalculateTableAddress4:
+	sla l	    ;multiply index by 4
+	rl h
+	sla l
+	rl h
+graphics_CalculateTableAddress1:
+	add hl,bc	;target address = base address + index * entry size
+	ex de,hl
 	ret
