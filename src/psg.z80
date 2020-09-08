@@ -1,0 +1,63 @@
+PSG_ADDRESS equ 0xA0
+PSG_DATA_WRITE equ 0xA1
+PSG_DATA_READ equ 0xA2
+
+;selects a register for reading/writing
+;input: a = register number
+psg_SelectReg:
+	out (PSG_ADDRESS),a
+	ret
+
+;reads PSG port A (register 14)
+;output: a = register value
+psg_PortARead:
+	ld a,14
+	call psg_SelectReg
+	in a,(PSG_DATA_READ)
+	ret
+
+;reads PSG port B (register 15)
+;output: a = register value
+psg_PortBRead:
+	ld a,15
+	call psg_SelectReg
+	in a,(PSG_DATA_READ)
+	ret
+
+;writes to PSG port B (register 15)
+;input: b = data
+;alters: a
+psg_PortBWrite:
+	ld a,15
+	call psg_SelectReg
+	ld a,b
+	out (PSG_DATA_WRITE),a
+	ret
+
+psg_KanaLEDOn:
+	call psg_PortBRead
+	and 0b01111111
+	ld b,a
+	call psg_PortBWrite
+	ret
+
+psg_KanaLEDOff:
+	call psg_PortBRead
+	or 0b10000000
+	ld b,a
+	call psg_PortBWrite
+	ret
+
+psg_SelectJoy1:
+	call psg_PortBRead
+	and 0b10111111
+	ld b,a
+	call psg_PortBWrite
+	ret
+
+psg_SelectJoy2:
+	call psg_PortBRead
+	or 0b01000000
+	ld b,a
+	call psg_PortBWrite
+	ret

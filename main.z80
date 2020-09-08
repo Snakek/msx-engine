@@ -13,6 +13,7 @@ includes:
 	include "src/ppi.z80"
 	include "src/vdp.z80"
 	include "src/graphics.z80"
+	include "src/psg.z80"
 
 main:
 	call vdp_init
@@ -54,11 +55,16 @@ loop:
 	ld b,1
 	call graphics_SetSpriteEarlyClockBit
 
+	call psg_SelectJoy1
+
 endloop:
 	ld b,3
 	call ppi_ReadKeyMatrix
 	cp 0xFF
 	jr nz,playsound
+	call psg_PortARead
+	srl a
+	jr nc,playsound
 	jr endloop
 	
 
@@ -67,13 +73,13 @@ playsound:
 	call ppi_KeyClickOff
 	jr endloop
 
+	di
+	halt
+
 attribute:
 	db 10
 	db 10
 	db 0
 	db 0b00001111
-
-	di
-	halt
 
 endaddr:
