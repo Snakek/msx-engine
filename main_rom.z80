@@ -1,10 +1,9 @@
-	org 0x8000
+	org 0x4000
 
 header:
-	db 0xFE
-	dw includes
-	dw endaddr
+	db "AB"
 	dw main
+	db 00,00,00,00,00,00
 
 includes:
 	include "grass.asm"
@@ -17,7 +16,7 @@ SFX:
 	include "src/vdp.z80"
 	include "src/graphics.z80"
 	include "src/psg.z80"
-	include "src/audio.z80"
+	include "src/audio_rom.z80"
 
 main:
 	call vdp_init
@@ -47,10 +46,8 @@ loop:
 	call graphics_SetSpriteName
 
 	ld hl,2
-	ld a,28
-	ld (0x9000),a
-	ld b,a
 	ld a,100
+	ld b,28
 	call graphics_SetSpritePos
 
 	ld hl,2
@@ -66,42 +63,19 @@ loop:
 	ld hl,SFX
 	call audio_InitSFX
 
-	ld a,0
-	ld (0x8000),a
-
 endloop:
 	halt
 	call audio_Play
-	ld a,(0x8000)
-	cp 0
-	jr z,asd
-	dec a
-	ld (0x8000),a
-asd:
 	ld b,3
 	call ppi_ReadKeyMatrix
 	cp 0xFF
 	jr z,endloop
 
 playsound:
-	ld a,(0x8000)
-	cp 0
-	jp nz,endloop
 	ld a,1
 	ld c,2
 	ld b,0
 	call audio_PlaySFX
-	ld hl,2
-	ld a,(0x9000)
-	inc a
-	ld b,a
-	ld a,100
-	call graphics_SetSpritePos
-	ld (0x9000),a
-
-
-	ld a,5
-	ld (0x8000),a
 	jr endloop
 
 	di
@@ -113,4 +87,5 @@ attribute:
 	db 0
 	db 0b00001111
 
+	org 0xC000
 endaddr:

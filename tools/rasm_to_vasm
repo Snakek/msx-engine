@@ -1,0 +1,11 @@
+if [ $# -ne 0 ]
+then
+	for file in "$@"
+	do
+		rasm $file -o ${file%.asm} -s -sl -sq
+		disark ${file%.asm}.bin $file --symbolFile ${file%.asm}.sym --sourceProfile vasm
+		rm ${file}.bin ${file}.sym
+	done
+else
+	echo "Usage: ./rasm_to_vasm [filenames]"
+fi

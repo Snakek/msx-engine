@@ -16,7 +16,7 @@ then
 
 else
 	echo "Usage: ./build [filename] [extension]
-	If no name is specified, will build all files"
+	If no name is specified, will build all files in folder"
 	exit 1
 fi
 

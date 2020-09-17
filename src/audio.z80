@@ -1,0 +1,8 @@
+audio_InitMusic equ PLY_AKG_Init
+audio_StopMusic equ PLY_AKG_Stop
+audio_InitSFX equ PLY_AKG_InitSoundEffects
+audio_PlaySFX equ PLY_AKG_PlaySoundEffect
+audio_StopSFX equ PLY_AKG_StopSoundEffectFromChannel
+audio_Play equ PLY_AKG_Play
+
+	include "src/audio_player.z80"
