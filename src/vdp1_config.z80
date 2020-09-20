@@ -1,6 +1,6 @@
 SCREEN_0 equ 0
-SCREEN_1 equ 0
-SCREEN_2 equ 1
+SCREEN_1 equ 1
+SCREEN_2 equ 0
 SCREEN_3 equ 0
 EXTERNAL_VDP_INPUT equ 0	;0 = disabled, 1 = enabled
 SPRITE_MAGNIFICATION equ 0	;0 = normal, 1 = double

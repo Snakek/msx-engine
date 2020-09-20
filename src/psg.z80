@@ -60,134 +60,77 @@ psg_SetNoiseFrequency:
 	pop af
 	ret
 
-;turns channel A's tone generator on
-psg_ChannelAToneOn:
+;turns off all of the channels' tone and noise generators
+psg_TurnOffAllChannels:
+	push af
+		ld a,7
+		call psg_SelectReg
+		ld a,0b10111110
+		out (PSG_DATA_WRITE),a
+	pop af
+
+;turns channel A's tone generator on/off
+psg_ToggleChannelATone:
 	push af
 		ld a,7
 		call psg_SelectReg
 		in a,(PSG_DATA_READ)
-		set 0,a
+		xor 0b00000001
 		out (PSG_DATA_WRITE),a
 	pop af
 	ret
 
-;turns channel A's tone generator off
-psg_ChannelAToneOff:
+;turns channel B's tone generator on/off
+psg_ToggleChannelBTone:
 	push af
 		ld a,7
 		call psg_SelectReg
 		in a,(PSG_DATA_READ)
-		res 0,a
+		xor 0b00000010
 		out (PSG_DATA_WRITE),a
 	pop af
 	ret
 
-;turns channel B's tone generator on
-psg_ChannelBToneOn:
+;turns channel C's tone generator on/off
+psg_ToggleChannelCTone:
 	push af
 		ld a,7
 		call psg_SelectReg
 		in a,(PSG_DATA_READ)
-		set 1,a
+		xor 0b00000100
 		out (PSG_DATA_WRITE),a
 	pop af
 	ret
 
-;turns channel B's tone generator off
-psg_ChannelBToneOff:
+;turns channel A's noise generator on/off
+psg_ToggleChannelANoise:
 	push af
 		ld a,7
 		call psg_SelectReg
 		in a,(PSG_DATA_READ)
-		res 1,a
+		xor 0b00001000
 		out (PSG_DATA_WRITE),a
 	pop af
 	ret
 
-;turns channel C's tone generator on
-psg_ChannelCToneOn:
+;turns channel B's noise generator on/off
+psg_ToggleChannelBNoise:
 	push af
 		ld a,7
 		call psg_SelectReg
 		in a,(PSG_DATA_READ)
-		set 2,a
+		xor 0b00010000
 		out (PSG_DATA_WRITE),a
 	pop af
 	ret
 
-;turns channel C's tone generator off
-psg_ChannelCToneOff:
+;turns channel C's noise generator on/off
+psg_ToggleChannelCNoise:
 	push af
 		ld a,7
 		call psg_SelectReg
 		in a,(PSG_DATA_READ)
-		res 2,a
-		out (PSG_DATA_WRITE),a
-	pop af
-	ret
-
-;turns channel A's noise generator on
-psg_ChannelANoiseOn:
-	push af
-		ld a,7
-		call psg_SelectReg
-		in a,(PSG_DATA_READ)
-		set 3,a
-		out (PSG_DATA_WRITE),a
-	pop af
-	ret
-
-;turns channel A's noise generator off
-psg_ChannelANoiseOff:
-	push af
-		ld a,7
-		call psg_SelectReg
-		in a,(PSG_DATA_READ)
-		res 3,a
-		out (PSG_DATA_WRITE),a
-	pop af
-	ret
-
-;turns channel B's noise generator on
-psg_ChannelBNoiseOn:
-	push af
-		ld a,7
-		call psg_SelectReg
-		in a,(PSG_DATA_READ)
-		set 4,a
-		out (PSG_DATA_WRITE),a
-	pop af
-	ret
-
-;turns channel B's noise generator off
-psg_ChannelBNoiseOff:
-	push af
-		ld a,7
-		call psg_SelectReg
-		in a,(PSG_DATA_READ)
-		res 4,a
-		out (PSG_DATA_WRITE),a
-	pop af
-	ret
-
-;turns channel C's noise generator on
-psg_ChannelCNoiseOn:
-	push af
-		ld a,7
-		call psg_SelectReg
-		in a,(PSG_DATA_READ)
-		set 5,a
-		out (PSG_DATA_WRITE),a
-	pop af
-	ret
-
-;turns channel C's noise generator off
-psg_ChannelCNoiseOff:
-	push af
-		ld a,7
-		call psg_SelectReg
-		in a,(PSG_DATA_READ)
-		res 5,a
+		xor 0b00100000
 		out (PSG_DATA_WRITE),a
 	pop af
 	ret

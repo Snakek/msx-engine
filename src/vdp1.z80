@@ -12,33 +12,28 @@ MODE_REG_7 equ (TEXT_COLOR << 4) | (BACKGROUND_COLOR)
 MODE_REG_2 equ 0b00000000
 MODE_REG_3 equ 0b10000000
 MODE_REG_4 equ 0b00000001
-MODE_REG_5 equ 0b00110110
-MODE_REG_6 equ 0b00000111
 	endif
 
 	if SCREEN_1 == 1
 MODE_REG_2 equ 0b00000110
 MODE_REG_3 equ 0b10000000
 MODE_REG_4 equ 0b00000000
-MODE_REG_5 equ 0b00110110
-MODE_REG_6 equ 0b00000111
 	endif
 
 	if SCREEN_2 == 1
 MODE_REG_2 equ 0b00000110
 MODE_REG_3 equ 0b11111111
 MODE_REG_4 equ 0b00000011
-MODE_REG_5 equ 0b00110110
-MODE_REG_6 equ 0b00000111
 	endif
 
 	if SCREEN_3 == 1
 MODE_REG_2 equ 0b00000010
 MODE_REG_3 equ 0b10000000
 MODE_REG_4 equ 0b00000000
+	endif
+
 MODE_REG_5 equ 0b00110110
 MODE_REG_6 equ 0b00000111
-	endif
 
 ;initializes vdp registers with configurations from vdp1_config file
 vdp_Init:
@@ -75,7 +70,7 @@ vdp_Init:
 	call vdp_RegWrite
 
 	ld b,0
-	ld de,0
+	ld de,0x0000
 	ld hl,0xFFFF
 	call vdp_FillVRAM	;wiping first VRAM page
 
