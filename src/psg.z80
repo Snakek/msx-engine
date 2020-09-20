@@ -34,30 +34,243 @@ psg_PortBWrite:
 	out (PSG_DATA_WRITE),a
 	ret
 
+;sets a channel's frequency
+;input: a = channel (0 = Channel A, 2 = Channel B, 3 = Channel C)
+;	hl = frequency
+;alters: a
+psg_SetToneFrequency:
+	push bc
+		ld c,PSG_DATA_WRITE
+		call psg_SelectReg
+		out (c),l
+		inc a
+		call psg_SelectReg
+		out (c),h
+	pop bc
+	ret
+
+;changes the noise generator's frequency
+;input: b = frequency
+psg_SetNoiseFrequency:
+	push af
+		ld a,6
+		call psg_SelectReg
+		ld a,b
+		out (PSG_DATA_WRITE),a
+	pop af
+	ret
+
+;turns channel A's tone generator on
+psg_ChannelAToneOn:
+	push af
+		ld a,7
+		call psg_SelectReg
+		in a,(PSG_DATA_READ)
+		set 0,a
+		out (PSG_DATA_WRITE),a
+	pop af
+	ret
+
+;turns channel A's tone generator off
+psg_ChannelAToneOff:
+	push af
+		ld a,7
+		call psg_SelectReg
+		in a,(PSG_DATA_READ)
+		res 0,a
+		out (PSG_DATA_WRITE),a
+	pop af
+	ret
+
+;turns channel B's tone generator on
+psg_ChannelBToneOn:
+	push af
+		ld a,7
+		call psg_SelectReg
+		in a,(PSG_DATA_READ)
+		set 1,a
+		out (PSG_DATA_WRITE),a
+	pop af
+	ret
+
+;turns channel B's tone generator off
+psg_ChannelBToneOff:
+	push af
+		ld a,7
+		call psg_SelectReg
+		in a,(PSG_DATA_READ)
+		res 1,a
+		out (PSG_DATA_WRITE),a
+	pop af
+	ret
+
+;turns channel C's tone generator on
+psg_ChannelCToneOn:
+	push af
+		ld a,7
+		call psg_SelectReg
+		in a,(PSG_DATA_READ)
+		set 2,a
+		out (PSG_DATA_WRITE),a
+	pop af
+	ret
+
+;turns channel C's tone generator off
+psg_ChannelCToneOff:
+	push af
+		ld a,7
+		call psg_SelectReg
+		in a,(PSG_DATA_READ)
+		res 2,a
+		out (PSG_DATA_WRITE),a
+	pop af
+	ret
+
+;turns channel A's noise generator on
+psg_ChannelANoiseOn:
+	push af
+		ld a,7
+		call psg_SelectReg
+		in a,(PSG_DATA_READ)
+		set 3,a
+		out (PSG_DATA_WRITE),a
+	pop af
+	ret
+
+;turns channel A's noise generator off
+psg_ChannelANoiseOff:
+	push af
+		ld a,7
+		call psg_SelectReg
+		in a,(PSG_DATA_READ)
+		res 3,a
+		out (PSG_DATA_WRITE),a
+	pop af
+	ret
+
+;turns channel B's noise generator on
+psg_ChannelBNoiseOn:
+	push af
+		ld a,7
+		call psg_SelectReg
+		in a,(PSG_DATA_READ)
+		set 4,a
+		out (PSG_DATA_WRITE),a
+	pop af
+	ret
+
+;turns channel B's noise generator off
+psg_ChannelBNoiseOff:
+	push af
+		ld a,7
+		call psg_SelectReg
+		in a,(PSG_DATA_READ)
+		res 4,a
+		out (PSG_DATA_WRITE),a
+	pop af
+	ret
+
+;turns channel C's noise generator on
+psg_ChannelCNoiseOn:
+	push af
+		ld a,7
+		call psg_SelectReg
+		in a,(PSG_DATA_READ)
+		set 5,a
+		out (PSG_DATA_WRITE),a
+	pop af
+	ret
+
+;turns channel C's noise generator off
+psg_ChannelCNoiseOff:
+	push af
+		ld a,7
+		call psg_SelectReg
+		in a,(PSG_DATA_READ)
+		res 5,a
+		out (PSG_DATA_WRITE),a
+	pop af
+	ret
+
+;sets amplitude configurations for a channel
+;input: a = channel (0 = Channel A, 1 = Channel B, 2 = Channel C)
+;	b = data
+;alters: a
+psg_SetAmplitude
+	add a,8
+	call psg_SelectReg
+	ld a,b
+	out (PSG_DATA_WRITE),a
+	ret
+
+;sets envelope generator frequency
+;input: hl = frequency
+psg_SetEnvelopeFrequency
+	push af
+		ld a,11
+		call psg_SelectReg
+		ld a,l
+		out (PSG_DATA_WRITE),a
+		ld a,12
+		call psg_SelectReg
+		ld a,h
+		out (PSG_DATA_WRITE),a
+	pop af
+
+;sets envelope generator shape
+;input: b = shape
+psg_SetEnvelopeShape
+	push af
+		ld a,13
+		call psg_SelectReg
+		ld a,b
+		out (PSG_DATA_WRITE),a
+	pop af
+
+;turns the Kana LED on
 psg_KanaLEDOn:
-	call psg_PortBRead
-	and 0b01111111
-	ld b,a
-	call psg_PortBWrite
+	push af
+		push bc
+			call psg_PortBRead
+			and 0b01111111
+			ld b,a
+			call psg_PortBWrite
+		pop bc
+	pop af
 	ret
 
+;turns the Kana LED off
 psg_KanaLEDOff:
-	call psg_PortBRead
-	or 0b10000000
-	ld b,a
-	call psg_PortBWrite
+	push af
+		push bc
+			call psg_PortBRead
+			or 0b10000000
+			ld b,a
+			call psg_PortBWrite
+		pop bc
+	pop af
 	ret
 
+;selects joystick 1 for reading
 psg_SelectJoy1:
-	call psg_PortBRead
-	and 0b10111111
-	ld b,a
-	call psg_PortBWrite
+	push af
+		push bc
+			call psg_PortBRead
+			and 0b10111111
+			ld b,a
+			call psg_PortBWrite
+		pop bc
+	pop af
 	ret
 
+;selects joystick 2 for reading
 psg_SelectJoy2:
-	call psg_PortBRead
-	or 0b01000000
-	ld b,a
-	call psg_PortBWrite
+	push af
+		push bc
+			call psg_PortBRead
+			or 0b01000000
+			ld b,a
+			call psg_PortBWrite
+		pop bc
+	pop af
 	ret

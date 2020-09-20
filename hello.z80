@@ -1,0 +1,41 @@
+s1 equ 0x006F
+putchar equ 0x00A2
+linelen equ 32
+
+	org 0x8000
+
+header:
+	db 0xFE
+	dw asd
+	dw endaddr - 1
+	dw main
+
+asd:
+	include "src/vdp1.z80"
+
+main:
+	call vdp_Init
+	ld hl, message
+
+newLine:
+	ld a, 13
+	call putchar
+	ld a, 10
+	call putchar
+
+printString:
+	ld a, (hl)
+	cp 0
+	jr z,quit
+	inc hl
+	call putchar
+	jr printString
+
+quit:
+	di
+	halt
+
+message:
+	db "Hello World!",0
+
+endaddr:

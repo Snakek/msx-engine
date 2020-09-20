@@ -1,0 +1,31 @@
+SCREEN_0_40 equ 0	    		;width 40
+SCREEN_0_80 equ 0			;width 80
+SCREEN_1 equ 0
+SCREEN_2 equ 0
+SCREEN_3 equ 0
+SCREEN_4 equ 0
+SCREEN_5 equ 0
+SCREEN_6 equ 0
+SCREEN_7 equ 0
+SCREEN_8 equ 0
+DIGITIZE_MODE equ 0			;0 = disabled, 1 = enabled
+LIGHT_PEN_INTERRUPTS equ 0		;0 = disabled, 1 = enabled
+INTERRUPT_HORIZONTAL_RETRACE equ 1	;0 = disabled, 1 = enabled
+ENABLE_VIDEO_DISPLAY equ 1		;0 = disabled, 1 = enabled
+INTERRUPT_VERTICAL_RETRACE equ 1	;0 = disabled, 1 = enabled
+SPRITE_SIZE equ 1			;0 = 8x8, 1 = 16x16
+SPRITE_MAGNIFICATION equ 0		;0 = normal, 1 = double
+ENABLE_MOUSE equ 0			;0 = disabled, 1 = enabled
+ENABLE_LIGHT_PEN equ 0			;0 = disabled, 1 = enabled
+SCREEN_7_SPRITE_COLOR equ 0		;0 = transparent, 1 = color 0
+COLOR_BUS_MODE equ 0			;0 = output, 1 = input
+VRAM_TYPE equ 0				;0 = 16KB, 1 = 64KB
+SPRITE_DISABLE equ 0			;0 = enabled, 1 = disabled
+BLACK_AND_WHITE equ 0			;0 = disabled, 1 = enabled
+EXPAND_VERTICAL_RES equ 0		;0 = 192 dots, 1 = 212 dots
+SIMULTANEOUS_SELECT_1 equ 0
+SIMULTANEOUS_SELECT_0 equ 0
+INTERLACE equ 0				;0 = disabled, 1 = enabled
+EVEN_ODD_SCREENS equ 0			;0 = same screen, 1 = different screens
+REFRESH_RATE equ 0			;0 = NTSC (60 Hz), 1 = PAL (50 Hz)
+DOT_CLOCK_MODE equ 0			;0 = output, 1 = input

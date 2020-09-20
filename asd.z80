@@ -1,0 +1,46 @@
+	org 0x8000
+
+header:
+	db 0xFE
+	dw includes
+	dw endaddr
+	dw main
+
+includes:
+	include "src/psg.z80"
+
+main:
+	call psg_ChannelAToneOff
+	call psg_ChannelANoiseOff
+	call psg_ChannelBToneOff
+	call psg_ChannelBNoiseOff
+	call psg_ChannelCToneOff
+	call psg_ChannelCNoiseOff
+	call psg_ChannelANoiseOn
+	call psg_ChannelBToneOn
+	call psg_ChannelCNoiseOn
+	call psg_ChannelCToneOn
+
+	ld b,0b10101010
+	call psg_SetNoiseFrequency
+
+	ld hl,0b0000101000001111
+	ld a,2
+	call psg_SetToneFrequency
+
+	call psg_KanaLEDOn
+
+	call psg_SelectJoy2
+
+	ld a,2
+	ld b,0b00011001
+	call psg_SetAmplitude
+	ld hl,0b1010111100000111
+	call psg_SetEnvelopeFrequency
+	ld b,0b00001100
+	call psg_SetEnvelopeShape
+
+	di
+	halt
+
+endaddr:

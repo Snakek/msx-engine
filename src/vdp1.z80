@@ -1,0 +1,212 @@
+VDP_VRAM equ 0x0098
+VDP_REG equ 0x0099
+
+	include "src/vdp1_config.z80"
+
+MODE_REG_0 equ (SCREEN_2 << 1) | (EXTERNAL_VDP_INPUT)
+MODE_REG_1 equ (VRAM_ADDRESSING << 7) | (ENABLE_VIDEO_DISPLAY << 6) | (ENABLE_VDP_INTERRUPT << 5) | (SCREEN_1 << 4) | (SCREEN_3 << 3) | (SPRITE_SIZE << 1) | (SPRITE_MAGNIFICATION)
+MODE_REG_7 equ (TEXT_COLOR << 4) | (BACKGROUND_COLOR)
+
+;address register initialization values
+	if SCREEN_0 == 1
+MODE_REG_2 equ 0b00000000
+MODE_REG_3 equ 0b10000000
+MODE_REG_4 equ 0b00000001
+MODE_REG_5 equ 0b00110110
+MODE_REG_6 equ 0b00000111
+	endif
+
+	if SCREEN_1 == 1
+MODE_REG_2 equ 0b00000110
+MODE_REG_3 equ 0b10000000
+MODE_REG_4 equ 0b00000000
+MODE_REG_5 equ 0b00110110
+MODE_REG_6 equ 0b00000111
+	endif
+
+	if SCREEN_2 == 1
+MODE_REG_2 equ 0b00000110
+MODE_REG_3 equ 0b11111111
+MODE_REG_4 equ 0b00000011
+MODE_REG_5 equ 0b00110110
+MODE_REG_6 equ 0b00000111
+	endif
+
+	if SCREEN_3 == 1
+MODE_REG_2 equ 0b00000010
+MODE_REG_3 equ 0b10000000
+MODE_REG_4 equ 0b00000000
+MODE_REG_5 equ 0b00110110
+MODE_REG_6 equ 0b00000111
+	endif
+
+;initializes vdp registers with configurations from vdp1_config file
+vdp_Init:
+	ld a,MODE_REG_0		;various configurations
+	ld b,0
+	call vdp_RegWrite
+	
+	ld a,MODE_REG_1		;various configurations
+	ld b,1
+	call vdp_RegWrite
+
+	ld a,MODE_REG_2		;name table address
+	ld b,2
+	call vdp_RegWrite
+
+	ld a,MODE_REG_3		;color table address
+	ld b,3
+	call vdp_RegWrite
+
+	ld a,MODE_REG_4		;pattern generator address
+	ld b,4
+	call vdp_RegWrite
+
+	ld a,MODE_REG_5		;sprite attribute table address
+	ld b,5
+	call vdp_RegWrite
+
+	ld a,MODE_REG_6		;sprite pattern table address
+	ld b,6
+	call vdp_RegWrite
+
+	ld a,MODE_REG_7		;screen colors
+	ld b,7
+	call vdp_RegWrite
+
+	ld b,0
+	ld de,0
+	ld hl,0xFFFF
+	call vdp_FillVRAM	;wiping first VRAM page
+
+	ret
+
+;writes a byte into a VDP register
+;input: a = data
+;	b = register number
+;alters: a,b
+vdp_RegWrite:
+	set 7,b	    ;set write bit
+	di
+		out (VDP_REG),a
+		ld a,b
+		out (VDP_REG),a
+	ei
+	ret
+
+;writes a byte array from memory into VRAM
+;input: hl = data address
+;	de = VRAM address
+;	b = bytes to write
+;alters: hl,de
+vdp_VRAMWriteFromMemory:
+	push bc
+		set 6,d	    ;set write bit
+		ld c,VDP_REG
+		di
+			out (c),e
+			out (c),d
+			dec c
+			otir
+		ei
+	pop bc
+	ret
+
+;writes a byte from a cpu register into VRAM
+;input: a = data
+;	de = VRAM address
+vdp_VRAMWriteFromReg:
+	push bc
+		push de
+			set 6,d	    ;set write bit
+			ld c,VDP_REG
+			di
+				out (c),e
+				out (c),d
+				dec c
+				out (c),a
+			ei
+		pop de
+	pop bc
+	ret
+
+;reads the current value of VDP status register
+;output: a = VDP status register
+vdp_ReadStatusReg:
+	di
+		in a,(VDP_REG)
+	ei
+	ret
+
+;reads a byte array from VRAM into memory
+;input: hl = data address
+;	de = VRAM address
+;	b = number of bytes
+;alters: hl
+vdp_VRAMReadToMemory:
+	push bc
+		ld c,VDP_REG
+		di
+			out (c),e
+			out (c),d
+			dec c
+			inir
+		ei
+	pop bc
+	ret
+
+;reads a byte from VRAM into a cpu register
+;input: de = VRAM address
+;output: a = byte read
+vdp_VRAMReadToReg:
+	push bc
+		ld c,VDP_REG
+		di
+			out (c),e
+			out (c),d
+			dec c
+			in a,(c)
+		ei
+	pop bc
+	ret
+
+;fills VRAM block with a byte
+;input: b = byte
+;	de = VRAM address
+;	hl = block size
+;alters: hl
+vdp_FillVRAM:
+	push af
+		push bc
+			set 6,d
+			ld c,VDP_REG
+			di
+				out (c),e
+				out (c),d
+				dec c
+FillVRAMLoop:
+				out (c),b
+				dec hl
+				ld a,h
+				cp 0
+				jr nz,FillVRAMLoop
+				ld a,l
+				cp 0
+				jr nz,FillVRAMLoop
+			ei
+		pop bc
+	pop af
+
+;changes background and text colors
+;input: a = background color
+;	b = text color
+;alters: b
+vdp_SetColors
+	sla a
+	sla a
+	sla a
+	sla a
+	or b
+	ld b,7
+	jr vdp_RegWrite
+	ret

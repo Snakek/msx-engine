@@ -14,7 +14,7 @@ SFX:
 	include "SoundEffects.asm"
 	include "src/math.z80"
 	include "src/ppi.z80"
-	include "src/vdp.z80"
+	include "src/vdp1.z80"
 	include "src/graphics.z80"
 	include "src/psg.z80"
 	include "src/audio.z80"
@@ -65,6 +65,12 @@ loop:
 
 	ld hl,SFX
 	call audio_InitSFX
+
+	ld a,5
+	ld b,7
+	call vdp_SetColors
+
+	call psg_KanaLEDOn
 
 	ld a,0
 	ld (0x8000),a
